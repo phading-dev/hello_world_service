@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world-service-deployment
+  labels:
+    app: hello-world-service-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hello-world-service
+  template:
+    metadata:
+      labels:
+        app: hello-world-service
+    spec:
+      serviceAccountName: hello-world-service-account
+      containers:
+      - name: hello-world-service-container
+        image: gcr.io/phading-dev/hello-world-service:latest
+        ports:
+        - containerPort: 8080
+        - containerPort: 8081
+---
+apiVersion: monitoring.googleapis.com/v1
+kind: PodMonitoring
+metadata:
+  name: hello-world-service-external-monitoring
+spec:
+  selector:
+    matchLabels:
+      app: hello-world-service-deployment
+  endpoints:
+  - port: 8081
+    path: /metricsz
+    interval: 30s
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: hello-world-service-external-neg-health-check
+spec:
+  healthCheck:
+    port: 8081
+    type: HTTPS
+    requestPath: /healthz
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-world-service-external
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
+    beta.cloud.google.com/backend-config: '{"default": "hello-world-service-neg-health-check"}'
+spec:
+  selector:
+    app: hello-world-service-deployment
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8081
+  type: ClusterIP
+---
+apiVersion: monitoring.googleapis.com/v1
+kind: PodMonitoring
+metadata:
+  name: hello-world-service-internal-monitoring
+spec:
+  selector:
+    matchLabels:
+      app: hello-world-service-deployment
+  endpoints:
+  - port: 8080
+    path: /metricsz
+    interval: 30s
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: hello-world-service-internal-neg-health-check
+spec:
+  healthCheck:
+    port: 8080
+    type: HTTP
+    requestPath: /healthz
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-world-service-internal
+spec:
+  selector:
+    app: hello-world-service-deployment
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: ClusterIP

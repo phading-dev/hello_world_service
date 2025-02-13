@@ -1,0 +1,21 @@
+{
+  "name": "@phading/hello_world_service",
+  "version": "0.1.0",
+  "description": "UserSessionService",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phading-dev/hello_world_service.git"
+  },
+  "author": "Yuxuan Xie <ykuyo.dev@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/phading-dev/hello_world_service/issues"
+  },
+  "homepage": "https://github.com/phading-dev/hello_world_service#readme",
+  "devDependencies": {
+    "@selfage/cli": "^5.0.1",
+    "@selfage/tsconfig": "^1.0.7",
+    "@types/node": "^22.1.0",
+    "typescript": "^5.7.2"
+  }
+}

@@ -2,17 +2,15 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: hello-world-service-deployment
-  labels:
-    app: hello-world-service-deployment
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: hello-world-service
+      app: hello-world-service-pod
   template:
     metadata:
       labels:
-        app: hello-world-service
+        app: hello-world-service-pod
     spec:
       serviceAccountName: hello-world-service-account
       containers:
@@ -29,7 +27,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: hello-world-service-deployment
+      app: hello-world-service-pod
   endpoints:
   - port: 8081
     path: /metricsz
@@ -54,7 +52,7 @@ metadata:
     beta.cloud.google.com/backend-config: '{"default": "hello-world-service-external-neg-health-check"}'
 spec:
   selector:
-    app: hello-world-service-deployment
+    app: hello-world-service-pod
   ports:
     - protocol: TCP
       port: 80
@@ -68,7 +66,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: hello-world-service-deployment
+      app: hello-world-service-pod
   endpoints:
   - port: 8080
     path: /metricsz
@@ -93,7 +91,7 @@ metadata:
     beta.cloud.google.com/backend-config: '{"default": "hello-world-service-internal-neg-health-check"}'
 spec:
   selector:
-    app: hello-world-service-deployment
+    app: hello-world-service-pod
   ports:
     - protocol: TCP
       port: 80

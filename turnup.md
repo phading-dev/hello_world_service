@@ -1,0 +1,2 @@
+1. Go to cloud build and set up a new trigger. In source, it asks to set up a GitHub connection. Name it as `phading-dev`, choose the region `us-central1`. Choose to install it in a new account `phading-dev`.
+1. Name it as `hello-world-service-builder`. Choose region in `us-central1`. In event, choose `manual invocation`.  In source, choose the repo `hello_world_service` and rename it manually as `hello_world_service`. In configuration, choose `cloud build configuration file` and location as `Repository`. Use the service account created above. Then create.

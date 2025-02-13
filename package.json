@@ -15,7 +15,12 @@
   "devDependencies": {
     "@selfage/cli": "^5.0.1",
     "@selfage/tsconfig": "^1.0.7",
+    "@types/express": "^4.17.21",
     "@types/node": "^22.1.0",
     "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "prom-client": "^15.1.3"
   }
 }

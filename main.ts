@@ -11,7 +11,7 @@ async function main() {
     res.setHeader("Content-Type", "text/plain");
     res.end(await promClient.register.metrics());
   });
-  app.get("/", (req, res) => {
+  app.get("/hw", (req, res) => {
     res.send("Hello World from express\n");
   });
   http

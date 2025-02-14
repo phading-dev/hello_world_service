@@ -14,7 +14,7 @@ export DB_NAME=hello-world
 # Create service account
 gcloud iam service-accounts create $BUILDER_ACCOUNT
 
-# Grant cloudbuild and container repo permissions to the service account
+# Grant cloudbuild and container repo and database permissions to the service account
 gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:$BUILDER_ACCOUNT@$PROJECT_ID.iam.gserviceaccount.com" --role='roles/cloudbuild.builds.builder' --condition=None
 gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:$BUILDER_ACCOUNT@$PROJECT_ID.iam.gserviceaccount.com" --role='roles/container.developer' --condition=None
 gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:$BUILDER_ACCOUNT@$PROJECT_ID.iam.gserviceaccount.com" --role='roles/spanner.databaseAdmin' --condition=None

@@ -1,0 +1,24 @@
+- kind: Message
+  name: User
+  fields:
+    - name: userId
+      type: string
+      index: 1
+    - name: createdTimeMs
+      type: number
+      index: 2
+- kind: SpannerDatabase
+  name: HelloWorldDatabase
+  tables:
+    - kind: MessageTable
+      name: User
+      storedInColumn: data
+      columns:
+        - userId
+      primaryKeys:
+        - userId
+      insert: InsertUser
+      get: GetUser
+      update: UpdateUser
+  outputDdl: ./db/ddl
+  outputSql: ./db/sql

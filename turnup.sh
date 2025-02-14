@@ -8,6 +8,8 @@ export REGION=us-central1
 export CLUSTER_NAME=phading-cluster
 export BUILDER_ACCOUNT=hello-world-service-builder
 export SERVICE_ACCOUNT=hello-world-service-account
+export BALANCED_DB_INSTANCE_ID=balanced-db-instance
+export DB_NAME=hello-world
 
 # Create service account
 gcloud iam service-accounts create $BUILDER_ACCOUNT
@@ -24,3 +26,6 @@ kubectl create serviceaccount $SERVICE_ACCOUNT --namespace default
 
 # Grant database permissions to the service account
 gcloud projects add-iam-policy-binding $PROJECT_ID --member=principal://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/$PROJECT_ID.svc.id.goog/subject/ns/default/sa/$SERVICE_ACCOUNT --role=roles/spanner.databaseUser --condition=None
+
+# Create Spanner database
+gcloud spanner databases create $DB_NAME --instance=$BALANCED_DB_INSTANCE_ID

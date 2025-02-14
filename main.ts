@@ -12,7 +12,10 @@ async function main() {
     res.end(await promClient.register.metrics());
   });
   app.get("/hw", (req, res) => {
-    res.send("Hello World from express\n");
+    res.end("Hello World from path /hw\n");
+  });
+  app.get("*", (req, res) => {
+    res.end(`Hello World from catch-all with ${req.url}\n`);
   });
   http
     .createServer(app)

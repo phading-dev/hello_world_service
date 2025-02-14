@@ -1,7 +1,7 @@
 {
   "name": "@phading/hello_world_service",
   "version": "0.1.0",
-  "description": "UserSessionService",
+  "description": "HelloWorldService",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/phading-dev/hello_world_service.git"

@@ -1,5 +1,8 @@
 steps:
 - name: 'node:22'
+  entrypoint: 'npm'
+  args: ['install']
+- name: 'node:22'
   entrypoint: 'npx'
   args: ['spanage', 'update', 'db/ddl', '-p', 'phading-dev', '-i', 'balanced-db-instance', '-d', 'hello-world']
 - name: 'gcr.io/cloud-builders/docker'

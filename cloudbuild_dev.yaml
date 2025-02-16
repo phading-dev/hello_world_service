@@ -1,6 +1,10 @@
 steps:
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['run', '--rm', 'gcr.io/phading-dev/spanner-schema-update-cli', 'node', 'main_bin', 'update', 'db/ddl', '-p', 'phading-dev', '-i', 'balanced-db-instance', '-d', 'hello-world-db']
+- name: 'node:20.12.1'
+  entrypoint: 'npm'
+  args: ['install']
+- name: 'node:20.12.1'
+  entrypoint: 'npx'
+  args: ['spanage', 'update', 'db/ddl', '-p', 'phading-dev', '-i', 'balanced-db-instance', '-d', 'hello-world-db']
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/phading-dev/hello-world-service:latest', '.']
 - name: "gcr.io/cloud-builders/docker"

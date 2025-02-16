@@ -1,5 +1,5 @@
 steps:
-- name: 'gcr.io/phading-dev/spanner_schema_update_cli'
+- name: 'gcr.io/phading-dev/spanner-schema-update-cli'
   args: ['update', 'db/ddl', '-p', 'phading-dev', '-i', 'balanced-db-instance', '-d', 'hello-world-db']
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/phading-dev/hello-world-service:latest', '.']

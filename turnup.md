@@ -1,2 +1,3 @@
 1. Go to cloud build and set up a new trigger. In source, it asks to set up a GitHub connection. Name it as `phading-dev`, choose the region `us-central1`. Choose to install it in a new account `phading-dev`.
 1. Name it as `hello-world-service-builder`. Choose region in `us-central1`. In event, choose `manual invocation`.  In source, choose the repo `hello_world_service` and rename it manually as `hello_world_service`. In configuration, choose `cloud build configuration file` and location as `Repository`. Use the service account created above. Then create.
+1. (Optional) After a Docker image is pushed, go to "Artifact Registry" -> "Repositories" -> "gcr.io" and click "Edit repository" to add a cleanup policy, which is to delete untagged images older than 1 month.

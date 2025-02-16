@@ -13,6 +13,7 @@
   },
   "homepage": "https://github.com/phading-dev/hello_world_service#readme",
   "devDependencies": {
+    "@selfage/bundler_cli": "^5.3.0",
     "@selfage/cli": "^5.0.1",
     "@selfage/generator_cli": "^4.1.0",
     "@selfage/spanner_schema_update_cli": "^1.4.2",
@@ -23,6 +24,7 @@
   },
   "dependencies": {
     "@google-cloud/spanner": "^7.18.1",
+    "@phading/cluster": "^0.1.2",
     "express": "^4.21.2",
     "prom-client": "^15.1.3"
   }

@@ -4,15 +4,15 @@ steps:
   args: ['install']
 - name: 'node:22'
   entrypoint: 'npx'
-  args: ['spanage', 'update', 'db/ddl', '-p', 'phading-dev', '-i', 'balanced-db-instance', '-d', 'hello-world']
+  args: ['spanage', 'update', 'db/ddl', '-p', 'phading-dev', '-i', 'balanced-db-instance', '-d', 'hello-world-db']
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/${PROJECT_ID}/hello-world-service:latest', '.']
+  args: ['build', '-t', 'gcr.io/phading-dev/hello-world-service:latest', '.']
 - name: "gcr.io/cloud-builders/docker"
-  args: ['push', 'gcr.io/${PROJECT_ID}/hello-world-service:latest']
+  args: ['push', 'gcr.io/phading-dev/hello-world-service:latest']
 - name: 'gcr.io/cloud-builders/kubectl'
   args: ['rollout', 'restart', 'deployment', 'hello-world-service-deployment']
   env:
-    - 'CLOUDSDK_CONTAINER_CLUSTER=phading-cluster'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=phading-dev'
     - 'CLOUDSDK_COMPUTE_REGION=us-central1'
 options:
   logging: CLOUD_LOGGING_ONLY

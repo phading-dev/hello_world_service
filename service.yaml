@@ -18,51 +18,11 @@ spec:
         image: gcr.io/phading-dev/hello-world-service:latest
         ports:
         - containerPort: 8080
-        - containerPort: 8081
 ---
 apiVersion: monitoring.googleapis.com/v1
 kind: PodMonitoring
 metadata:
-  name: hello-world-service-external-monitoring
-spec:
-  selector:
-    matchLabels:
-      app: hello-world-service-pod
-  endpoints:
-  - port: 8081
-    path: /metricsz
-    interval: 30s
----
-apiVersion: cloud.google.com/v1
-kind: BackendConfig
-metadata:
-  name: hello-world-service-external-neg-health-check
-spec:
-  healthCheck:
-    port: 8081
-    type: HTTP
-    requestPath: /healthz
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: hello-world-service-external
-  annotations:
-    cloud.google.com/neg: '{"ingress": true}'
-    beta.cloud.google.com/backend-config: '{"default": "hello-world-service-external-neg-health-check"}'
-spec:
-  selector:
-    app: hello-world-service-pod
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 8081
-  type: ClusterIP
----
-apiVersion: monitoring.googleapis.com/v1
-kind: PodMonitoring
-metadata:
-  name: hello-world-service-internal-monitoring
+  name: hello-world-service-monitoring
 spec:
   selector:
     matchLabels:
@@ -75,7 +35,7 @@ spec:
 apiVersion: cloud.google.com/v1
 kind: BackendConfig
 metadata:
-  name: hello-world-service-internal-neg-health-check
+  name: hello-world-service-neg-health-check
 spec:
   healthCheck:
     port: 8080
@@ -85,10 +45,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: hello-world-service-internal
+  name: hello-world-service
   annotations:
     cloud.google.com/neg: '{"ingress": true}'
-    beta.cloud.google.com/backend-config: '{"default": "hello-world-service-internal-neg-health-check"}'
+    beta.cloud.google.com/backend-config: '{"default": "hello-world-service-neg-health-check"}'
 spec:
   selector:
     app: hello-world-service-pod

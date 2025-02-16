@@ -1,12 +1,15 @@
 import express = require("express");
 import http = require("http");
 import promClient = require("prom-client");
-import { Spanner } from "@google-cloud/spanner";
 import { getUser, insertUserStatement } from "./db/sql";
+import { Spanner } from "@google-cloud/spanner";
+import "./environment";
 
-export let SPANNER_DATABASE = new Spanner()
-  .instance("balanced-db-instance")
-  .database("hello-world");
+export let SPANNER_DATABASE = new Spanner({
+  projectId: globalThis.PROJECT_ID,
+})
+  .instance(globalThis.BALANCED_DB_INSTANCE_ID)
+  .database(globalThis.DB_NAME);
 
 async function main() {
   let app = express();
@@ -25,8 +28,8 @@ async function main() {
       await transaction.batchUpdate([
         insertUserStatement({
           userId: "user1",
-          createdTimeMs: Date.now()
-        })
+          createdTimeMs: Date.now(),
+        }),
       ]);
       await transaction.commit();
     });
@@ -38,10 +41,9 @@ async function main() {
   });
   http
     .createServer(app)
-    .listen(8080, () => console.log("Listening on port 8080"));
-  http
-    .createServer(app)
-    .listen(8081, () => console.log("Listening on port 8081"));
+    .listen(globalThis.PORT, () =>
+      console.log(`Listening on port ${globalThis.PORT}`),
+    );
 }
 
 main();

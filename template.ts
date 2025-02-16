@@ -4,7 +4,7 @@ import "./environment";
 
 let cloudbuildTemplate = `steps:
 - name: 'gcr.io/${globalThis.PROJECT_ID}/spanner-schema-update-cli'
-  args: ['update', 'db/ddl', '-p', '${globalThis.PROJECT_ID}', '-i', '${globalThis.BALANCED_DB_INSTANCE_ID}', '-d', '${globalThis.DB_NAME}']
+  args: ['node', 'main_bin', 'update', 'db/ddl', '-p', '${globalThis.PROJECT_ID}', '-i', '${globalThis.BALANCED_DB_INSTANCE_ID}', '-d', '${globalThis.DB_NAME}']
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/${globalThis.PROJECT_ID}/hello-world-service:latest', '.']
 - name: "gcr.io/cloud-builders/docker"

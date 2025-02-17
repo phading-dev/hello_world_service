@@ -9,7 +9,7 @@ export let SPANNER_DATABASE = new Spanner({
   projectId: globalThis.PROJECT_ID,
 })
   .instance(globalThis.BALANCED_DB_INSTANCE_ID)
-  .database(globalThis.DB_NAME);
+  .database(globalThis.DATABASE_ID);
 
 async function main() {
   let app = express();

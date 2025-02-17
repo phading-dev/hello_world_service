@@ -2,25 +2,7 @@
 import { writeFileSync } from "fs";
 import "./environment";
 
-let cloudbuildTemplate = `steps:
-- name: 'node:20.12.1'
-  entrypoint: 'npm'
-  args: ['install']
-- name: 'node:20.12.1'
-  entrypoint: 'npx'
-  args: ['spanage', 'update', 'db/ddl', '-p', '${globalThis.PROJECT_ID}', '-i', '${globalThis.BALANCED_DB_INSTANCE_ID}', '-d', '${globalThis.DB_NAME}']
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/${globalThis.PROJECT_ID}/hello-world-service:latest', '.']
-- name: "gcr.io/cloud-builders/docker"
-  args: ['push', 'gcr.io/${globalThis.PROJECT_ID}/hello-world-service:latest']
-- name: 'gcr.io/cloud-builders/kubectl'
-  args: ['rollout', 'restart', 'deployment', 'hello-world-service-deployment']
-  env:
-    - 'CLOUDSDK_CONTAINER_CLUSTER=${globalThis.PROJECT_ID}'
-    - 'CLOUDSDK_COMPUTE_REGION=${globalThis.CLUSTER_REGION}'
-options:
-  logging: CLOUD_LOGGING_ONLY
-`;
+let env: string;
 
 let turnupTemplate = `# GCP auth
 gcloud auth application-default login
@@ -43,7 +25,27 @@ kubectl create serviceaccount ${globalThis.SERVICE_ACCOUNT} --namespace default
 gcloud projects add-iam-policy-binding ${globalThis.PROJECT_ID} --member=principal://iam.googleapis.com/projects/${globalThis.PROJECT_NUMBER}/locations/global/workloadIdentityPools/${globalThis.PROJECT_ID}.svc.id.goog/subject/ns/default/sa/${globalThis.SERVICE_ACCOUNT} --role=roles/spanner.databaseUser --condition=None
 
 # Create Spanner database
-gcloud spanner databases create ${globalThis.DB_NAME} --instance=${globalThis.BALANCED_DB_INSTANCE_ID}
+gcloud spanner databases create ${globalThis.DATABASE_ID} --instance=${globalThis.BALANCED_DB_INSTANCE_ID}
+`;
+
+let cloudbuildTemplate = `steps:
+- name: 'node:20.12.1'
+  entrypoint: 'npm'
+  args: ['install']
+- name: 'node:20.12.1'
+  entrypoint: 'npx'
+  args: ['spanage', 'update', 'db/ddl', '-p', '${globalThis.PROJECT_ID}', '-i', '${globalThis.BALANCED_DB_INSTANCE_ID}', '-d', '${globalThis.DATABASE_ID}']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/${globalThis.PROJECT_ID}/hello-world-service:latest', '.']
+- name: "gcr.io/cloud-builders/docker"
+  args: ['push', 'gcr.io/${globalThis.PROJECT_ID}/hello-world-service:latest']
+- name: 'gcr.io/cloud-builders/kubectl'
+  args: ['rollout', 'restart', 'deployment', 'hello-world-service-deployment']
+  env:
+    - 'CLOUDSDK_CONTAINER_CLUSTER=${globalThis.CLUSTER_NAME}'
+    - 'CLOUDSDK_COMPUTE_REGION=${globalThis.CLUSTER_REGION}'
+options:
+  logging: CLOUD_LOGGING_ONLY
 `;
 
 let dockerTemplate = `FROM node:20.12.1
@@ -119,11 +121,11 @@ spec:
 `;
 
 function main() {
-  let suffix = process.argv[2];
-  writeFileSync(`cloudbuild_${suffix}.yaml`, cloudbuildTemplate);
-  writeFileSync(`turnup_${suffix}.sh`, turnupTemplate);
-  writeFileSync(`Dockerfile`, dockerTemplate);
-  writeFileSync(`service.yaml`, serviceTemplate);
+  env = process.argv[2];
+  writeFileSync(`cloudbuild_${env}.yaml`, cloudbuildTemplate);
+  writeFileSync(`turnup_${env}.sh`, turnupTemplate);
+  writeFileSync(`Dockerfile_${env}`, dockerTemplate);
+  writeFileSync(`service_${env}.yaml`, serviceTemplate);
 }
 
 main();

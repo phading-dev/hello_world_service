@@ -6,9 +6,14 @@ steps:
   entrypoint: 'npx'
   args: ['spanage', 'update', 'db/ddl', '-p', 'phading-dev', '-i', 'balanced-db-instance', '-d', 'hello-world-db']
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/phading-dev/hello-world-service:latest', '.']
+  args: ['build', '-t', 'gcr.io/phading-dev/hello-world-service:latest', '-f', 'dev/Dockerfile', '.']
 - name: "gcr.io/cloud-builders/docker"
   args: ['push', 'gcr.io/phading-dev/hello-world-service:latest']
+- name: 'gcr.io/cloud-builders/kubectl'
+  args: ['apply', '-f', 'dev/service.yaml']
+  env:
+    - 'CLOUDSDK_CONTAINER_CLUSTER=phading-cluster'
+    - 'CLOUDSDK_COMPUTE_REGION=us-central1'
 - name: 'gcr.io/cloud-builders/kubectl'
   args: ['rollout', 'restart', 'deployment', 'hello-world-service-deployment']
   env:
@@ -16,3 +21,4 @@ steps:
     - 'CLOUDSDK_COMPUTE_REGION=us-central1'
 options:
   logging: CLOUD_LOGGING_ONLY
+  

@@ -1,56 +1,70 @@
+import { Spanner, Database, Transaction } from '@google-cloud/spanner';
 import { Statement } from '@google-cloud/spanner/build/src/transaction';
-import { User, USER } from './schema';
-import { serializeMessage, deserializeMessage } from '@selfage/message/serializer';
-import { Database, Transaction } from '@google-cloud/spanner';
-import { MessageDescriptor } from '@selfage/message/descriptor';
+import { PrimitiveType, MessageDescriptor } from '@selfage/message/descriptor';
 
 export function insertUserStatement(
-  data: User,
-): Statement {
-  return insertUserInternalStatement(
-    data.userId,
-    data
-  );
-}
-
-export function insertUserInternalStatement(
-  userId: string,
-  data: User,
+  args: {
+    userId: string,
+    createdTimeMs: number,
+  }
 ): Statement {
   return {
-    sql: "INSERT User (userId, data) VALUES (@userId, @data)",
+    sql: "INSERT User (userId, createdTimeMs) VALUES (@userId, @createdTimeMs)",
     params: {
-      userId: userId,
-      data: Buffer.from(serializeMessage(data, USER).buffer),
+      userId: args.userId,
+      createdTimeMs: Spanner.float(args.createdTimeMs),
     },
     types: {
       userId: { type: "string" },
-      data: { type: "bytes" },
+      createdTimeMs: { type: "float64" },
+    }
+  };
+}
+
+export function deleteUserStatement(
+  args: {
+    userUserIdEq: string,
+  }
+): Statement {
+  return {
+    sql: "DELETE User WHERE (User.userId = @userUserIdEq)",
+    params: {
+      userUserIdEq: args.userUserIdEq,
+    },
+    types: {
+      userUserIdEq: { type: "string" },
     }
   };
 }
 
 export interface GetUserRow {
-  userData: User,
+  userUserId?: string,
+  userCreatedTimeMs?: number,
 }
 
 export let GET_USER_ROW: MessageDescriptor<GetUserRow> = {
   name: 'GetUserRow',
   fields: [{
-    name: 'userData',
+    name: 'userUserId',
     index: 1,
-    messageType: USER,
+    primitiveType: PrimitiveType.STRING,
+  }, {
+    name: 'userCreatedTimeMs',
+    index: 2,
+    primitiveType: PrimitiveType.NUMBER,
   }],
 };
 
 export async function getUser(
   runner: Database | Transaction,
-  userUserIdEq: string,
+  args: {
+    userUserIdEq: string,
+  }
 ): Promise<Array<GetUserRow>> {
   let [rows] = await runner.run({
-    sql: "SELECT User.data FROM User WHERE (User.userId = @userUserIdEq)",
+    sql: "SELECT User.userId, User.createdTimeMs FROM User WHERE (User.userId = @userUserIdEq)",
     params: {
-      userUserIdEq: userUserIdEq,
+      userUserIdEq: args.userUserIdEq,
     },
     types: {
       userUserIdEq: { type: "string" },
@@ -59,34 +73,28 @@ export async function getUser(
   let resRows = new Array<GetUserRow>();
   for (let row of rows) {
     resRows.push({
-      userData: deserializeMessage(row.at(0).value, USER),
+      userUserId: row.at(0).value == null ? undefined : row.at(0).value,
+      userCreatedTimeMs: row.at(1).value == null ? undefined : row.at(1).value.value,
     });
   }
   return resRows;
 }
 
 export function updateUserStatement(
-  data: User,
-): Statement {
-  return updateUserInternalStatement(
-    data.userId,
-    data
-  );
-}
-
-export function updateUserInternalStatement(
-  userUserIdEq: string,
-  setData: User,
+  args: {
+    userUserIdEq: string,
+    setCreatedTimeMs: number,
+  }
 ): Statement {
   return {
-    sql: "UPDATE User SET data = @setData WHERE (User.userId = @userUserIdEq)",
+    sql: "UPDATE User SET createdTimeMs = @setCreatedTimeMs WHERE (User.userId = @userUserIdEq)",
     params: {
-      userUserIdEq: userUserIdEq,
-      setData: Buffer.from(serializeMessage(setData, USER).buffer),
+      userUserIdEq: args.userUserIdEq,
+      setCreatedTimeMs: Spanner.float(args.setCreatedTimeMs),
     },
     types: {
       userUserIdEq: { type: "string" },
-      setData: { type: "bytes" },
+      setCreatedTimeMs: { type: "float64" },
     }
   };
 }

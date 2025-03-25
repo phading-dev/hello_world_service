@@ -2,18 +2,21 @@ import express = require("express");
 import http = require("http");
 import promClient = require("prom-client");
 import { getUser, insertUserStatement } from "./db/sql";
+import { ENV_VARS } from "./env_vars";
 import { Spanner } from "@google-cloud/spanner";
-import "./environment";
 
 export let SPANNER_DATABASE = new Spanner({
-  projectId: globalThis.PROJECT_ID,
+  projectId: ENV_VARS.projectId,
 })
-  .instance(globalThis.BALANCED_DB_INSTANCE_ID)
-  .database(globalThis.DATABASE_ID);
+  .instance(ENV_VARS.spannerInstanceId)
+  .database(ENV_VARS.spannerDatabaseId);
 
 async function main() {
   let app = express();
   app.get("/healthz", (req, res) => {
+    res.end("OK");
+  });
+  app.get("/readiness", (req, res) => {
     res.end("OK");
   });
   app.get("/metricsz", async (req, res) => {
@@ -36,13 +39,13 @@ async function main() {
     res.end("User created.\n");
   });
   app.get("/hw/get", async (req, res) => {
-    let rows = await getUser(SPANNER_DATABASE, "user1");
+    let rows = await getUser(SPANNER_DATABASE, { userUserIdEq: "user1" });
     res.end(`User: ${JSON.stringify(rows)}\n`);
   });
   http
     .createServer(app)
-    .listen(globalThis.PORT, () =>
-      console.log(`Listening on port ${globalThis.PORT}`),
+    .listen(ENV_VARS.port, () =>
+      console.log(`Listening on port ${ENV_VARS.port}`),
     );
 }
 

@@ -5,10 +5,10 @@
       "name": "userId",
       "addColumnDdl": "ALTER TABLE User ADD COLUMN userId STRING(MAX) NOT NULL"
     }, {
-      "name": "data",
-      "addColumnDdl": "ALTER TABLE User ADD COLUMN data BYTES(MAX) NOT NULL"
+      "name": "createdTimeMs",
+      "addColumnDdl": "ALTER TABLE User ADD COLUMN createdTimeMs FLOAT64 NOT NULL"
     }],
-    "createTableDdl": "CREATE TABLE User (userId STRING(MAX) NOT NULL, data BYTES(MAX) NOT NULL) PRIMARY KEY (userId ASC)",
+    "createTableDdl": "CREATE TABLE User (userId STRING(MAX) NOT NULL, createdTimeMs FLOAT64 NOT NULL) PRIMARY KEY (userId ASC)",
     "indexes": []
   }]
 }

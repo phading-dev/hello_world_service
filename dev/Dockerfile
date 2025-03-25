@@ -7,3 +7,4 @@ RUN npx tsc
 
 EXPOSE 8080
 CMD ["node", "main"]
+  

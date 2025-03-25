@@ -20,3 +20,4 @@ gcloud projects add-iam-policy-binding phading-dev --member=principal://iam.goog
 
 # Create Spanner database
 gcloud spanner databases create hello-world-db --instance=balanced-db-instance
+  

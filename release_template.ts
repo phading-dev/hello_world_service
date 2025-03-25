@@ -64,7 +64,7 @@ RUN npm install
 RUN npx tsc
 
 EXPOSE ${ENV_VARS.port}
-CMD ["node", "main"]
+CMD ["node", "${env}/main"]
   `;
   writeFileSync(`${env}/Dockerfile`, dockerTemplate);
 
@@ -188,6 +188,11 @@ spec:
               number: ${K8S_SERVICE_PORT}
 `;
   writeFileSync(`${env}/service.yaml`, serviceTemplate);
+
+  let mainTemplate = `import "./env";
+import "../main";
+`;
+  writeFileSync(`${env}/main.ts`, mainTemplate);
 }
 
 import "./dev/env";

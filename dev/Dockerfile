@@ -6,5 +6,5 @@ RUN npm install
 RUN npx tsc
 
 EXPOSE 8080
-CMD ["node", "main"]
+CMD ["node", "dev/main"]
   
